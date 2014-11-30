@@ -1,0 +1,14 @@
+{
+  "name": "Unity 2D Platformer",
+  "description": "A super simple 2D platform game in Unity.",
+  "version": "0.0.0",
+  "private": false,
+  "dependencies": {},
+  "happyFunTimes": {
+    "gameId": "unity2dplatformer",
+    "category": "example",
+    "gameType": "Unity3D",
+    "apiVersion": "1.5.0",
+    "minPlayers": 1
+  }
+}
