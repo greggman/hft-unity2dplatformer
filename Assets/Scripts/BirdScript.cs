@@ -17,6 +17,7 @@ public class BirdScript : MonoBehaviour {
     private bool m_grounded = false;
     private bool m_facingRight = true;
     private Animator m_animator;
+    private Rigidbody2D m_rigidbody2d;
     private GUIStyle m_guiStyle = new GUIStyle();
     private GUIContent m_guiName = new GUIContent("");
     private Rect m_nameRect = new Rect(0,0,0,0);
@@ -58,6 +59,7 @@ public class BirdScript : MonoBehaviour {
     void Start ()
     {
         m_animator = GetComponent<Animator>();
+        m_rigidbody2d = GetComponent<Rigidbody2D>();
         SetColor(new Color(1f, 0.5f, 0.8f, 1f));
     }
 
@@ -86,7 +88,7 @@ public class BirdScript : MonoBehaviour {
         {
             m_grounded = false;
             m_animator.SetBool("Ground", m_grounded);
-            rigidbody2D.AddForce(new Vector2(0, jumpForce));
+            m_rigidbody2d.AddForce(new Vector2(0, jumpForce));
         }
         m_jumpJustPressed = false;
     }
@@ -130,7 +132,7 @@ public class BirdScript : MonoBehaviour {
         m_animator.SetBool("Ground", m_grounded);
 
         // Pass our vertical speed to the animator
-        m_animator.SetFloat("vSpeed", rigidbody2D.velocity.y);
+        m_animator.SetFloat("vSpeed", m_rigidbody2d.velocity.y);
 
         // Get left/right input (get both phone and local input)
         float move = m_direction + Input.GetAxis("Horizontal");
@@ -139,7 +141,7 @@ public class BirdScript : MonoBehaviour {
         m_animator.SetFloat("Speed", Mathf.Abs(move));
 
         // and move us
-        rigidbody2D.velocity = new Vector2(move * maxSpeed, rigidbody2D.velocity.y);
+        m_rigidbody2d.velocity = new Vector2(move * maxSpeed, m_rigidbody2d.velocity.y);
         if (move > 0 && !m_facingRight) {
             Flip();
         } else if (move < 0 && m_facingRight) {
