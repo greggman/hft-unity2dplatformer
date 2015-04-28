@@ -55,17 +55,25 @@ public class BirdScript : MonoBehaviour {
         public bool busy = false;
     }
 
+    void Init() {
+        if (m_animator == null) {
+            m_animator = GetComponent<Animator>();
+            m_rigidbody2d = GetComponent<Rigidbody2D>();
+        }
+    }
+
     // Use this for initialization
     void Start ()
     {
-        m_animator = GetComponent<Animator>();
-        m_rigidbody2d = GetComponent<Rigidbody2D>();
+        Init();
         SetColor(new Color(1f, 0.5f, 0.8f, 1f));
     }
 
     // Called when player connects with their phone
     void InitializeNetPlayer(SpawnInfo spawnInfo)
     {
+        Init();
+
         m_netPlayer = spawnInfo.netPlayer;
         m_netPlayer.OnDisconnect += Remove;
 
