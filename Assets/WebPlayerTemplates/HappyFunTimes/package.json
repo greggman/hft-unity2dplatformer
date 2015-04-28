@@ -1,14 +1,14 @@
 {
-  "name": "Unity 2D Platformer",
-  "description": "A super simple 2D platform game in Unity.",
-  "version": "0.0.0",
-  "private": false,
   "dependencies": {},
+  "description": "A super simple 2D platform game in Unity.",
   "happyFunTimes": {
-    "gameId": "unity2dplatformer",
+    "apiVersion": "1.9.0",
     "category": "example",
+    "gameId": "unity2dplatformer",
     "gameType": "Unity3D",
-    "apiVersion": "1.8.0",
     "minPlayers": 1
-  }
+  },
+  "name": "Unity 2D Platformer",
+  "private": false,
+  "version": "0.0.0"
 }
