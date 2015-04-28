@@ -26,17 +26,6 @@ public class BirdScript : MonoBehaviour {
     // Manages the connection between this object and the phone.
     private NetPlayer m_netPlayer;
 
-    // Message when player changes their name.
-    private class MessageSetName : MessageCmdData
-    {
-        public MessageSetName() {  // needed for deserialization
-        }
-        public MessageSetName(string _name) {
-            name = _name;
-        }
-        public string name = "";
-    }
-
     // Message when player presses or release jump button
     private class MessageJump : MessageCmdData
     {
@@ -47,12 +36,6 @@ public class BirdScript : MonoBehaviour {
     private class MessageMove : MessageCmdData
     {
         public int dir = 0;  // will be -1, 0, or +1
-    }
-
-    // Message when player starts or stops editing their name.
-    private class MessageBusy : MessageCmdData
-    {
-        public bool busy = false;
     }
 
     void Init() {
@@ -76,17 +59,15 @@ public class BirdScript : MonoBehaviour {
 
         m_netPlayer = spawnInfo.netPlayer;
         m_netPlayer.OnDisconnect += Remove;
+        m_netPlayer.OnNameChange += ChangeName;
 
         // Setup events for the different messages.
-        m_netPlayer.RegisterCmdHandler<MessageSetName>("setName", OnSetName);
-        m_netPlayer.RegisterCmdHandler<MessageBusy>("busy", OnBusy);
-//        m_netPlayer.RegisterCmdHandler<MessageColor>(OnColor);
         m_netPlayer.RegisterCmdHandler<MessageMove>("move", OnMove);
         m_netPlayer.RegisterCmdHandler<MessageJump>("jump", OnJump);
 
         MoveToRandomSpawnPoint();
 
-        SetName(spawnInfo.name);
+        SetName(m_netPlayer.Name);
     }
 
     void Update()
@@ -180,21 +161,9 @@ public class BirdScript : MonoBehaviour {
         GUI.Box(m_nameRect, m_playerName, m_guiStyle);
     }
 
-    void OnSetName(MessageSetName data)
+    void ChangeName(object sender, System.EventArgs e)
     {
-        if (data.name.Length == 0)
-        {
-            m_netPlayer.SendCmd(new MessageSetName(m_playerName));
-        }
-        else
-        {
-            SetName(data.name);
-        }
-    }
-
-    void OnBusy(MessageBusy data)
-    {
-        // We ignore this message
+        SetName(m_netPlayer.Name);
     }
 
     void OnMove(MessageMove data)
