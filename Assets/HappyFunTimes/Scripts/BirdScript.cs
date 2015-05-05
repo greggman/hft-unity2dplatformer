@@ -9,6 +9,10 @@ public class BirdScript : MonoBehaviour {
     public LayerMask whatIsGround;
     public float jumpForce = 700f;
     public Transform nameTransform;
+
+    // this is the base color of the avatar.
+    // we need to know it because we need to know what color
+    // the avatar will become after its hsv has been adjusted.
     public Color baseColor;
 
     private float m_direction = 0.0f;
@@ -40,8 +44,16 @@ public class BirdScript : MonoBehaviour {
         public int dir = 0;  // will be -1, 0, or +1
     }
 
+    // Message to send to phone to tell it the color of the avatar
+    // Note that it sends an hue, saturation, value **adjustment**
+    // meaning that RGB values are first converted to HSV where H, S, and V
+    // are each in the 0 to 1 range. Then this adjustment is added to those 3
+    // values. Finally they are converted back to RGB.
+    // The min/max values are a hue range. Anything outside that range will
+    // not be adjusted.
     private class MessageSetColor : MessageCmdData
     {
+        public MessageSetColor() { }  // for deserialization
         public MessageSetColor(float _h, float _s, float _v, float _min, float _max)
         {
             h = _h;
@@ -70,15 +82,6 @@ public class BirdScript : MonoBehaviour {
     void Start ()
     {
         Init();
-        float hue = Random.value;
-        float sat = (float)Random.Range(0, 3) * 0.25f + 0.5f;
-        MessageSetColor msg = new MessageSetColor(
-            hue,
-            sat,
-            0.0f,
-            m_material.GetFloat("_HSVRangeMin"),
-            m_material.GetFloat("_HSVRangeMax"));
-        SetColor(msg);
     }
 
     // Called when player connects with their phone
@@ -97,6 +100,20 @@ public class BirdScript : MonoBehaviour {
         MoveToRandomSpawnPoint();
 
         SetName(m_netPlayer.Name);
+
+        // Pick a random amount to adjust the hue and saturation
+        float hue = Random.value;
+        float sat = (float)Random.Range(0, 3) * -0.25f;
+        MessageSetColor color = new MessageSetColor(
+            hue,
+            sat,
+            0.0f,
+            m_material.GetFloat("_HSVRangeMin"),
+            m_material.GetFloat("_HSVRangeMax"));
+        SetColor(color);
+
+        // Send it to the phone
+        m_netPlayer.SendCmd("setColor", color);
     }
 
     void Update()
@@ -142,7 +159,6 @@ public class BirdScript : MonoBehaviour {
         m_material.SetVector("_HSVAAdjust", new Vector4(color.h, color.s, color.v, 0.0f));
         m_material.SetFloat("_HSVRangeMin", color.rangeMin);
         m_material.SetFloat("_HSVRangeMax", color.rangeMax);
-        m_netPlayer.SendCmd("setColor", color);
     }
 
     void Remove(object sender, System.EventArgs e)
