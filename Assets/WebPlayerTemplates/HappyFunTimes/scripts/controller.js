@@ -83,22 +83,36 @@ requirejs(
   var startClient = function() {
 
     g_client = new GameClient();
-    //
-    var handleScore = function() {
+
+    function handleScore() {
     };
 
-    var handleDeath = function() {
+    function handleDeath() {
     };
 
-    var handleSetColor = function(msg) {
+    function handleSetColor(msg) {
+      // Look up the canvas for the avatar
       var canvas = $("avatar");
+
+      // Get the size it's displayed by CSS and make
+      // it's internal dimensions match.
       var width = canvas.clientWidth;
       var height = canvas.clientHeight;
       canvas.width = width;
       canvas.height = height;
+
+      // Now get a context so we can draw on it.
       var ctx = canvas.getContext("2d");
-      var coloredImage = ImageUtils.adjustHSV(images.idle.img, msg.h, msg.s, msg.v, msg.range)
+
+      // Adjust the avatar's hue, saturuation, value to match whatever color
+      // we chose.
+      var coloredImage = ImageUtils.adjustHSV(images.idle.img, msg.h, msg.s, msg.v, [msg.rangeMin, msg.rangeMax]);
+
+      // Scale the image larger. We do this manually because the canvas API
+      // will blur the image but we want a pixelated image so it looks "old skool"
       var frame = ImageUtils.scaleImage(coloredImage, 128, 128);
+
+      // Draw it in the canvas and stretch it to fill the canvas.
       ctx.drawImage(frame, 0, 0, ctx.canvas.width, ctx.canvas.height);
     };
 
@@ -111,17 +125,23 @@ requirejs(
 
     CommonUI.setupStandardControllerUI(g_client, globals);
 
-    var handleLeftRight = function(pressed, bit) {
+    function handleLeftRight(pressed, bit) {
+      // Clear the bit for this direction and then set it if pressed is true.
       g_leftRight = (g_leftRight & ~bit) | (pressed ? bit : 0);
+
+      // Only send if anything has changed.
       if (g_leftRight != g_oldLeftRight) {
         g_oldLeftRight = g_leftRight;
+
+        // send a direction (-1, 0, or 1)
         g_client.sendCmd('move', {
             dir: (g_leftRight & 1) ? -1 : ((g_leftRight & 2) ? 1 : 0),
         });
       }
     };
 
-    var handleJump = function(pressed) {
+    function handleJump(pressed) {
+      // Only send it if it has changed
       if (g_jump != pressed) {
         g_jump = pressed;
         g_client.sendCmd('jump', {
@@ -137,7 +157,7 @@ requirejs(
     Input.setupKeys(keys);
 
     Touch.setupButtons({
-      inputElement: $("buttons"),
+      inputElement: $("buttons"),  // element receiving the input
       buttons: [
         { element: $("left"),  callback: function(e) { handleLeftRight(e.pressed, 0x1); }, },
         { element: $("right"), callback: function(e) { handleLeftRight(e.pressed, 0x2); }, },

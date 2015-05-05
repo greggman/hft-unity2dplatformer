@@ -34,6 +34,8 @@ html, body {
 #buttons {
     position: absolute;
 
+    /* make sure the user dragging their fingers or the mouse point
+       doesn't select anything */
     -moz-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none;
@@ -67,6 +69,7 @@ html, body {
 }
 
 
+/* move the buttons and the avatar canvas if the screen is really small */
 @media only screen and (max-height : 208px) {
     .button {
         bottom: 22px;
