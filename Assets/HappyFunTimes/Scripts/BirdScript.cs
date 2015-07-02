@@ -145,20 +145,29 @@ public class BirdScript : MonoBehaviour {
         m_nameRect.height = size.y + 5;
     }
 
-    void SetColor(MessageSetColor color) {
-        Color[] pix = new Color[1];
+    void SetColor(MessageSetColor colorAdjust) {
+        // get the hsva for the baseColor
         Vector4 hsva = ColorUtils.ColorToHSVA(baseColor);
-        hsva.x += color.h;
-        hsva.y += color.s;
-        hsva.w += color.v;
-        pix[0] = ColorUtils.HSVAToColor(hsva);
+        // adjust that base color by the amount we picked
+        hsva.x += colorAdjust.h;
+        hsva.y += colorAdjust.s;
+        hsva.w += colorAdjust.v;
+
+        // now get the adjusted color.
+        Color playerColor = ColorUtils.HSVAToColor(hsva);
+
+        // Create a 1 pixel texture for the OnGUI code to draw the label
+        Color[] pix = new Color[1];
+        pix[0] = playerColor;
         Texture2D tex = new Texture2D(1, 1);
         tex.SetPixels(pix);
         tex.Apply();
         m_guiStyle.normal.background = tex;
-        m_material.SetVector("_HSVAAdjust", new Vector4(color.h, color.s, color.v, 0.0f));
-        m_material.SetFloat("_HSVRangeMin", color.rangeMin);
-        m_material.SetFloat("_HSVRangeMax", color.rangeMax);
+
+        // Set the HSVA material of the character to the color adjustments.
+        m_material.SetVector("_HSVAAdjust", new Vector4(colorAdjust.h, colorAdjust.s, colorAdjust.v, 0.0f));
+        m_material.SetFloat("_HSVRangeMin", colorAdjust.rangeMin);
+        m_material.SetFloat("_HSVRangeMax", colorAdjust.rangeMax);
     }
 
     void Remove(object sender, System.EventArgs e)

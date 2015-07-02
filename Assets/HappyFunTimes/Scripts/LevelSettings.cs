@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HappyFunTimes;
+using UnityEngine;
 
 // There is supposed to be only 1 of these.
 // Other objects can use LevelSettings.settings to
@@ -7,6 +8,9 @@ public class LevelSettings : MonoBehaviour
 {
     public Transform bottomOfLevel;
     public Transform[] spawnPoints;
+
+    [HideInInspector]
+    public PlayerSpawner playerSpawner = null;
 
     static private LevelSettings s_settings;
 
@@ -24,6 +28,7 @@ public class LevelSettings : MonoBehaviour
             throw new System.InvalidProgramException("there is more than one level settings object!");
         }
         s_settings = this;
+        playerSpawner = GetComponent<PlayerSpawner>();
     }
 
     void Cleanup()
