@@ -1,16 +1,9 @@
 HFT-Unity 2D Platformer
 =======================
 
-This is a sample Unity3D game for the [HappyFunTimes party games system](http://greggman.github.io/HappyFunTimes).
+** This repo is depecated. It has been merged with http://github.com/greggman/hft-unity3d **
 
-<img src="Assets/WebPlayerTemplates/HappyFunTimes/screenshot.png" />
-
-It is basically [the 2D platformer example](https://unity3d.com/learn/tutorials/modules/beginner/2d) from the
-unity website with HappyFunTimes control added.
-
-Players that fall of the bottom or edges are respawned
-
-[Some more docs can be found here](http://docs.happyfuntimes.net/docs/unity/2d-platformer.html).
+In that repo see the scenes in `Assets/HappyFunTimes/Samples/Scenes`
 
 
 
